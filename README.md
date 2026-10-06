@@ -1,294 +1,35 @@
-# SmritiSathi
-AI-Powered Cognitive Gaming &amp; Memory Assistance Platform for Elderly Dementia Patients in North Eastern Region
-# SmritiSathi: Page Flow PRD
-**AI-Powered Cognitive Gaming & Memory Assistance Platform for Elderly Dementia Patients in North Eastern Region (NER)**
+SmritiSathi
+**AI-Powered Cognitive Gaming & Memory Assistance Platform for Elderly Dementia Patients in North Eastern Region 
+The North Eastern Region (NER) is witnessing a gradual rise in age-related cognitive disorders such as dementia and memory loss among the elderly population. Many families in remote and rural areas face challenges in accessing specialized neurological care, cognitive therapy, and long-term elderly support services due to limited healthcare infrastructure and geographical barriers.
 
-*(Working title. Front-end only. Design system, colors, and typography live in the knowledge base.)*
+Elderly patients suffering from dementia often experience memory decline, confusion, anxiety, and social isolation, while caregivers face difficulties in continuous monitoring and engagement. There is limited availability of affordable and culturally inclusive digital therapeutic solutions tailored for elderly individuals in the North-Eastern Region.
 
----
+To strengthen elderly healthcare and improve cognitive well-being, there is a need for an accessible, engaging, and Al-enabled cognitive gaming solution designed specifically for dementia patients in NER.
 
-## 1. Project Overview
+Description:
 
-SmritiSathi is a mobile/tablet-first web app that helps elderly dementia patients in NER keep their minds active, follow daily routines, and stay emotionally engaged. It also gives caregivers and healthcare workers a simple way to monitor progress. Many families in remote areas lack access to neurological care, so the app must feel friendly, culturally familiar, voice-first, and usable offline.
+This problem statement seeks the development of an AI-powered cognitive gaming and memory assistance platform for elderly dementia patients in the North Eastern Region.
 
-**Target users:** Elderly patients (early to moderate dementia), family caregivers, and healthcare workers (ASHA workers, nurses, clinicians).
+The solution should:
 
-**Primary goals:**
-- Patient: enjoy short games, never miss medicine or water, feel supported.
-- Caregiver: know the patient is safe, engaged, and on schedule.
-- Healthcare worker: spot patients who need attention quickly.
+a. Include interactive cognitive games and activities focused on:
 
-**Business objectives:** Early cognitive intervention, higher routine adherence, and wider digital healthcare access in NER.
+• Memory improvement
+• Attention and concentration 0 Daily routine recall
+• Pattern and object recognition of emotional and mental engagement b. Use AI/ML algorithms to adapt difficulty levels based on patient performance and cognitive condition c. Support multilingual and voice-assisted interaction suitable for elderly users in NER Include culturally familiar themes, visuals, sounds, and regional language support for d. better engagement e. Provide reminders for:
+• Medicines
+• Hydration
+• Daily activities
+• Medical appointments.
 
-**Success metrics:** Daily active sessions per patient, reminder completion rate, weekly game completion, caregiver alert response time.
+f. Enable caregivers and healthcare workers to monitor patient progress through dashboards and activity levels g. Work in low-connectivity environments with offline functionality support h. Be accessible through mobile/tablet devices with a simple and elderly-friendly interface The platform should encourage long-term cognitive engagement, emotional well-being, and social interaction among elderly users.
 
----
+Expected Solution: A user-friendly Al-enabled cognitive assistance platform with:
 
-## 2. User Types and Permissions
-
-The app has three separate views, simulated with mock data and a simple view switcher for the demo.
-
-| View | Sees | Can do | Cannot do |
-|---|---|---|---|
-| **Patient** | Own home, reminders, games, family messages | Play games, confirm reminders, call for help, change language/voice | Edit schedules, see analytics, see other patients |
-| **Caregiver** | One linked patient's dashboard | Set reminders, view progress, acknowledge alerts, choose language and themes | See other patients, change clinical settings |
-| **Healthcare Worker** | Full patient list and every patient's detail page | Review trends, add clinical notes, adjust difficulty ceiling, acknowledge alerts | Play as the patient |
-
-**Patient design principle:** No menus, no pop-ups, one task per screen, voice and tap both supported.
-
-**Auth note (front-end only):** Use a mock role switcher on a landing screen so reviewers can open each view. No real login screens are designed.
-
----
-
-## 3. Navigation and Information Architecture
-
-**Patient view:** No navigation bar. A single home screen with large cards is the only hub. Every sub-screen has one large "Home" button and nothing else.
-
-**Caregiver view:** Bottom tabs on mobile, left sidebar on tablet/desktop.
-- Overview, Reminders, Progress, Alerts, Settings
-
-**Healthcare Worker view:** Bottom tabs on mobile, sidebar on desktop.
-- Patients, Alerts, Reports, Settings
-
-**Route hierarchy:**
-```
-/                       Role switcher
-/patient                Reminder flow, then Home
-/patient/play           Game picker
-/patient/play/:game     Game screen
-/patient/my-day         Today's schedule
-/patient/family         Family photos/messages
-/caregiver              Overview dashboard
-/caregiver/reminders    Reminder list + add/edit
-/caregiver/progress     Trend charts
-/caregiver/alerts       Alert list
-/caregiver/settings     Language, voice, theme
-/clinician              Patient list table
-/clinician/patient/:id  Patient detail
-/clinician/alerts       All alerts
-```
-
-**Breadcrumbs:** Only on the Healthcare Worker patient detail page (Patients > Name).
-
-**Search:** Healthcare Worker patient table only (by name or village).
-
-**Global elements:** An offline/sync status chip on the caregiver and clinician headers. A language and voice toggle on every view.
-
-**Mobile differences:** Sidebars collapse into bottom tabs. Tables become stacked cards.
-
----
-
-## 4. Core User Flows
-
-**Flow 1: Patient Daily Session**
-Entry: Opens the app.
-Prerequisites: Caregiver has set up the profile.
-Steps:
-1. Open app → voice greeting with name, date, and time of day
-2. Pending reminder appears full-screen → patient taps "Yes, done" or "Remind me later"
-3. Next pending reminder shown → same action
-4. Home with big cards (Play, My Day, Family) → patient taps Play
-5. Suggested game opens → patient plays → warm result screen
-Success: Session logged and the caregiver sees completion.
-Errors: Voice not recognized → on-screen big buttons remain. Offline → everything works locally.
-Alternatives: Patient skips straight to Home if no reminders are pending.
-
-**Flow 2: Caregiver Sets Up a Reminder**
-Entry: Reminders tab.
-Steps:
-1. Tap "Add reminder" → side drawer opens
-2. Choose type (Medicine, Water, Activity, Appointment) → fields adapt
-3. Set time, repeat, and voice message language → Save
-4. Reminder appears in the list → toast confirms
-Success: Reminder shows in the patient's flow.
-Errors: Missing time → inline message. Duplicate time → gentle warning.
-Alternatives: Edit or pause from the list row menu.
-
-**Flow 3: Caregiver Responds to an Alert**
-Entry: Alert badge or Overview card.
-Steps:
-1. Open Alerts → see "Missed medicine at 8:00 AM" → tap alert
-2. Detail drawer shows time and context → tap "Acknowledge" or "Call patient"
-3. Alert moves to Resolved
-Errors: Offline → acknowledgment queued, shown as "Will sync".
-
-**Flow 4: Healthcare Worker Reviews a Patient**
-Entry: Patients table.
-Steps:
-1. Sort by "Needs attention" → click a patient row
-2. Detail page shows stat cards, trend charts, and activity feed
-3. Add a clinical note → adjust difficulty ceiling → Save
-Success: Note appears in the patient timeline.
-
-**Flow 5: Offline Use and Sync**
-Patient plays with no connection → a small "Saved on device" tag shows to caregivers → when the connection returns, the status chip changes to "Synced just now".
-
----
-
-## 5. Detailed Page Specifications
-
-### Page 1: Patient Reminder Screen
-Route: `/patient` | Access: Patient
-Layout: Full-screen single card, nothing else.
-```
-+------------------------+
-|     (illustration)     |
-|  "Time for your        |
-|   morning medicine"    |
-|  [ Yes, I took it ]    |
-|  [ Remind me later ]   |
-+------------------------+
-```
-Data: Reminder type, time, short text, speaker button to replay voice.
-Actions: Confirm → next reminder or Home. Later → snoozes 15 minutes.
-States: Loading shows a calm spinner. Empty skips to Home. Error shows a friendly "Let's go home" button.
-Mobile: Buttons span full width, minimum 64px height.
-Edge cases: Many pending reminders → show max 3, the rest are queued for later.
-
-### Page 2: Patient Home
-Route: `/patient/home`
-```
-+------------------------+
-| Good morning, Ama      |
-| [  PLAY  ] [ MY DAY ]  |
-| [ FAMILY ] [  HELP  ]  |
-+------------------------+
-```
-Data: Greeting, date, and 3 to 4 large cards.
-Actions: Each card opens its page. Help sends an alert to the caregiver (with a confirmation screen).
-Empty: Starter "Let's try something fun" game card is always present.
-
-### Page 3: Game Picker and Game Screen
-Routes: `/patient/play`, `/patient/play/:game`
-Games: Memory match (regional objects), Sound and picture recognition, Routine recall ("What do we do after tea?"), Pattern completion.
-Game screen layout: Large play area, a speaker button for instructions, a single Home button.
-Feedback: Encouraging only, with no "wrong" or "failed" wording. Soft retry hints appear after two misses.
-Result screen: Stars, a warm message, and the buttons "Play again" and "Home".
-Edge cases: Mid-game exit saves progress. Audio blocked → show a captions banner.
-
-### Page 4: My Day
-Route: `/patient/my-day`
-Vertical timeline of today's reminders with large icons. Done items show a green tick, upcoming ones show the time. Read-only, with a "Read aloud" button.
-
-### Page 5: Family
-Route: `/patient/family`
-Grid of 4 to 6 large family photos with names. Tap a photo to hear a recorded message or see a short note. Empty state: "Your family will appear here soon."
-
-### Page 6: Caregiver Overview
-Route: `/caregiver`
-```
-+--------------------------------+
-| Stat cards: Games | Reminders  |
-|             Level | Last active|
-| [ 7-day trend chart ]          |
-| Recent activity | Alerts       |
-+--------------------------------+
-```
-Data: Today's games played, reminders completed (e.g., 5/6), current difficulty level, last active time, 7-day score trend, alert list.
-Actions: Click an alert to open the drawer, "Add reminder" shortcut.
-States: Loading skeleton cards. Empty shows the setup checklist (add patient, set language, add first reminder). Error shows a retry button.
-Mobile: Cards stack, and the chart becomes horizontally scrollable.
-
-### Page 7: Caregiver Reminders
-Route: `/caregiver/reminders`
-List grouped by type with time, repeat, and an on/off toggle. "Add reminder" opens a side drawer. Filter by type.
-Edge cases: Overlapping reminders warn on save.
-
-### Page 8: Caregiver Progress
-Route: `/caregiver/progress`
-Charts for each cognitive area (memory, attention, recall, recognition) over 7, 14, or 30 days. Time-range toggle, plus a simple "Doing well / Needs attention" summary line.
-
-### Page 9: Healthcare Worker Patient List
-Route: `/clinician`
-```
-+---------------------------------+
-| Search [____]  Filter ▾ Sort ▾  |
-| Name | Village | Adherence | ⚠ |
-| ...                             |
-+---------------------------------+
-```
-Data: Name, village, language, adherence %, last active, alert status.
-Filters: Alert status, language, cognitive stage. Sort: Needs attention, adherence, last active.
-Mobile: Rows become cards.
-
-### Page 10: Patient Detail (Healthcare Worker)
-Route: `/clinician/patient/:id`
-Same card layout as the caregiver overview, plus a clinical notes section and a difficulty ceiling control. Breadcrumb at the top.
-
----
-
-## 6. Mock Data Strategy
-
-**Files:** `patients.json`, `caregivers.json`, `clinicians.json`, `reminders.json`, `gameSessions.json`, `alerts.json`, `familyMembers.json`.
-**Volumes:** 8 patients (mixed cognitive stages), 2 caregivers, 1 healthcare worker, about 10 reminders per patient, 30 days of game scores per patient, 3 to 6 alerts per patient.
-**Realism:** Patients use varied regional languages and villages across NER, with Assamese, Bodo, Manipuri, Mizo, Khasi, Nagamese, and others. Scores trend differently per patient (improving, stable, declining).
-**Relationships:** Each patient links to one caregiver, all link to the one healthcare worker.
-**Mock services:** `getPatients()`, `getPatient(id)`, `getReminders()`, `addReminder()`, `getSessions()`, `getAlerts()`, `acknowledgeAlert()`, simulated delay of 300 to 600ms.
-**Generation:** Hardcoded for patients and family, scripted generation for game sessions.
-
----
-
-## 7. Interaction Patterns and Micro-interactions
-
-- **Patient:** Full-screen pages only. No pop-ups, modals, or drag and drop. Large tap feedback with a gentle pulse and sound.
-- **Caregiver and Healthcare Worker:** Side drawers for add/edit reminder and alert detail. Full pages for patient detail.
-- **Toasts:** Used for save and acknowledge confirmations (professional views only).
-- **Confirmation dialogs:** Only for destructive actions (delete reminder). The patient is never shown a dialog.
-- **Real-time:** Simulated alert arriving with a badge pulse.
-
----
-
-## 8. Edge Cases and Error Handling
-
-- **Loading:** Skeleton cards for professionals, a calm single spinner for patients.
-- **Empty:** Patient sees starter content. Professionals see a short message plus one action and a setup checklist.
-- **Forms:** Inline validation with plain language messages.
-- **Errors:** Patient sees "Let's go back home" and never a technical message. Professionals see a retry button.
-- **Offline:** Patient flow is unaffected. Professionals see a chip showing "Offline, changes saved on device".
-- **Voice failure:** On-screen buttons always remain available.
-- **Permission denied:** Redirect to the user's own home with a short message.
-
----
-
-## 9. Performance and UX Considerations
-
-- Pagination of 10 rows on the patient table.
-- Lazy load charts and game assets.
-- Optimistic updates on reminder toggles and alert acknowledgment.
-
----
-
-## 10. Implementation Checklist
-
-### Patient Reminder Screen
-- [ ] Build full-screen reminder card
-- [ ] Add voice replay and snooze
-- [ ] Handle loading, empty, and error states
-- [ ] Add mobile responsiveness
-
-### Patient Home, My Day, Family
-- [ ] Build large card home with greeting
-- [ ] Build timeline and family grid
-- [ ] Handle empty (starter content) and error states
-- [ ] Add mobile responsiveness
-
-### Game Picker and Game Screens
-- [ ] Build picker and 4 game screens
-- [ ] Add result screen and mid-game save
-- [ ] Handle audio-blocked fallback
-
-### Caregiver Overview, Reminders, Progress, Alerts
-- [ ] Build dashboard cards, charts, and tabs
-- [ ] Build reminder drawer and alert drawer
-- [ ] Handle loading, empty (checklist), and error states
-- [ ] Add mobile responsiveness
-
-### Healthcare Worker Patients and Patient Detail
-- [ ] Build table with search, filter, and sort
-- [ ] Build detail page with notes and difficulty control
-- [ ] Handle loading, empty, error states
-- [ ] Add card layout for mobile
-
-### Global
-- [ ] Role switcher, language/voice toggle, sync status chip
-- [ ] Mock data files and service functions
+• Adaptive gaming and memory training modules
+• Voice-enabled multilingual interface
+• Cognitive performance tracking and analytics dashboard
+• Caregiver monitoring and alert system
+• Offline synchronization support for remote areas
+• Secure patient data management system
+• Simple and accessible UI/UX designed for elderly users The solution should support early cognitive intervention, improve quality of life for elderly dementia patients, and strengthen digital healthcare accessibility across the North Eastern Region.
