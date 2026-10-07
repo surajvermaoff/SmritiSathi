@@ -1,0 +1,298 @@
+# SmritiSathi: Hero Landing and Login PRD
+
+**Page:** Hero section landing page and system entry
+**Route:** `/`
+**Scope:** Front-end only. Mock login with simulated delays. Design tokens, fonts, and tone rules live in the knowledge base.
+
+---
+
+## 1. Overview
+
+The landing page is the first screen anyone sees. It does two jobs at once:
+
+1. **Welcome** people with a warm, culturally familiar hero that explains SmritiSathi in one sentence.
+2. **Let each person in** through a simple, role-appropriate entry (Patient, Caregiver, Healthcare Worker).
+
+This page replaces the bare role switcher described in the page-flow PRD. The role switcher still exists, but now it is the login entry inside the hero, so reviewers can open each view quickly.
+
+**Goals**
+- A caregiver or healthcare worker understands what the app does within 5 seconds.
+- Any role reaches its home screen in 3 taps or fewer.
+- The patient never faces a form, password, or error.
+- The page loads fast on slow connections and works offline once visited.
+
+**Success metrics (simulated events in the demo):** time to first tap, role selected per visit, login completion rate, language toggled, "Demo mode" usage.
+
+---
+
+## 2. Decisions and Assumptions
+
+| Topic | Decision |
+|---|---|
+| Real authentication | None. Login is simulated with mock data and a simulated 300 to 600ms delay. |
+| Patient entry | **No credentials.** Patients tap their own photo and name. The device is set up by the caregiver. |
+| Caregiver and Healthcare Worker entry | Mobile number plus 4-digit code, both pre-filled in demo mode. Any 4-digit code succeeds in demo. |
+| Session | Held in app state and local storage. "Remember this device" is on by default for patients. |
+| Languages | Toggle in the header, applied to hero copy and login panel. |
+| Voice | Optional spoken welcome behind a "Hear welcome" button. Never auto-plays. |
+| Scope | Hero plus login panel is the core. A light "How it helps" strip and footer sit below as secondary content. |
+
+---
+
+## 3. Users and Entry Paths
+
+| Role | What they want here | Entry method | Lands on |
+|---|---|---|---|
+| Patient | Get in without thinking | Tap "I am [Name]" card | `/patient` |
+| Caregiver | Check on one family member | Mobile number plus 4-digit code | `/caregiver` |
+| Healthcare Worker | Review many patients | Mobile number plus 4-digit code | `/clinician` |
+
+**Patient design principle on this page:** if the device is known, the patient sees **one** large card with their photo and name and one button. Nothing else competes for attention.
+
+---
+
+## 4. Page Structure
+
+Top to bottom:
+
+1. **Header:** logo and name, language toggle, help link ("Need help signing in?")
+2. **Hero section:** headline, supporting line, illustration, primary entry actions
+3. **Login panel:** role cards, then the role's entry form
+4. **"How it helps" strip (secondary):** three short benefits
+5. **Footer:** privacy note, offline note, version
+
+### Desktop layout (1024px and above)
+
+```
++--------------------------------------------------------------+
+| (logo) SmritiSathi                    [Language ▾]  [Help]   |
++--------------------------------------------------------------+
+|                                  |                           |
+|  Stay sharp. Stay connected.     |   Who is signing in?      |
+|  Games, reminders and family,    |   [ Patient          ]    |
+|  in your own language.           |   [ Caregiver        ]    |
+|                                  |   [ Healthcare Worker]    |
+|  [ Hear welcome ]                |                           |
+|                                  |   (form appears here)     |
+|        (illustration)            |                           |
++--------------------------------------------------------------+
+|  Play     |   Remember     |   Stay safe                     |
++--------------------------------------------------------------+
+|  Footer                                                      |
++--------------------------------------------------------------+
+```
+
+### Mobile and tablet layout (below 1024px)
+
+```
++------------------------+
+| (logo)       [Lang ▾]  |
+|------------------------|
+|  Stay sharp.           |
+|  Stay connected.       |
+|  (illustration)        |
+|  [ Hear welcome ]      |
+|------------------------|
+|  Who is signing in?    |
+|  [ Patient          ]  |
+|  [ Caregiver        ]  |
+|  [ Healthcare Worker]  |
+|------------------------|
+|  How it helps          |
++------------------------+
+```
+
+The login panel stacks under the hero. On selecting a role, the form opens **inline below the role cards** (no pop-ups or modals on this page).
+
+---
+
+## 5. Hero Section Specification
+
+### Content
+
+| Element | Specification |
+|---|---|
+| Headline | "Stay sharp. Stay connected." Max 6 words, 40px bold (mobile 32px). |
+| Supporting line | "Memory games, daily reminders and family messages, in your own language." One sentence. |
+| Illustration | Warm flat illustration: an elderly person and a family member sharing tea, with a tea garden or river and hills behind. No photos of real patients. No clinical imagery such as brains or medical symbols. |
+| Voice button | "Hear welcome" with speaker icon. Plays a short spoken greeting in the selected language. Shows captions while playing. |
+| Trust line | "Works without internet. Your family's information stays private." |
+
+### Visual rules
+- Background `--bg` with a soft `--primary-tint` shape behind the illustration.
+- Headline in `--primary-dark`, supporting line in `--text`.
+- Text over illustration areas must meet contrast. Never place text directly on a busy image area.
+- Motion: illustration fades in over 300ms. No parallax, looping, or autoplay animation.
+
+### Copy (English, translations to be reviewed by native speakers)
+
+| Key | English |
+|---|---|
+| `hero.title` | Stay sharp. Stay connected. |
+| `hero.subtitle` | Memory games, daily reminders and family messages, in your own language. |
+| `hero.hearWelcome` | Hear welcome |
+| `hero.trust` | Works without internet. Your family's information stays private. |
+| `login.who` | Who is signing in? |
+| `login.patient` | I am the patient |
+| `login.caregiver` | I am a family caregiver |
+| `login.clinician` | I am a healthcare worker |
+| `login.continueAs` | Continue as {name} |
+| `login.mobile` | Mobile number |
+| `login.code` | 4-digit code |
+| `login.signIn` | Sign in |
+| `login.help` | Need help signing in? |
+| `login.demo` | Demo mode: any 4-digit code works |
+| `login.tryAgain` | That code did not match. Let's try again. |
+| `login.offlineOk` | You are offline. You can still continue. |
+
+Languages shown in the toggle: English, Assamese, Bodo, Manipuri (Meiteilon), Mizo, Khasi, Nagamese. Language names are displayed in their own script where a font is available, with a Latin fallback.
+
+---
+
+## 6. Login Panel Specification
+
+### 6.1 Role cards
+
+Three large cards, equal weight, each with an icon, a role title, and a one-line description.
+
+| Card | Icon | Description |
+|---|---|---|
+| Patient | Smiling face | "Play, remember, and see your family" |
+| Caregiver | Two people | "Set reminders and follow progress" |
+| Healthcare Worker | Stethoscope or care icon | "Review patients and add notes" |
+
+- Minimum height 88px, full width on mobile, selected state uses `--primary-tint` with a 2px `--primary` border and a tick.
+- Tapping a card selects it and opens its entry area inline. Only one is open at a time.
+- On a remembered patient device, the **Patient card is pre-selected and expanded**, and the other two are collapsed under "Not you?".
+
+### 6.2 Patient entry
+
+- Shows a large card: patient's photo (illustration placeholder), first name in 32px, and one big button "Continue as Ama".
+- If no remembered profile, show a short list (max 4) of demo patient photo tiles, each tappable.
+- **No typing, no password, no code.**
+- Tapping a profile runs the mock login, shows a calm spinner for 300 to 600ms, and routes to `/patient`.
+- Voice: "Hello Ama" plays after tap if voice is on.
+
+### 6.3 Caregiver and Healthcare Worker entry
+
+Fields:
+
+| Field | Type | Rules |
+|---|---|---|
+| Mobile number | Numeric, 10 digits | Pre-filled with a demo number in demo mode. Inline message if shorter than 10 digits. |
+| 4-digit code | Numeric, 4 boxes | Pre-filled in demo mode. Show/hide toggle. |
+
+Actions:
+- **Sign in** (primary, full width) with a loading state.
+- **Need help signing in?** opens an inline help text ("Ask your healthcare worker or family member to share your code").
+- Role-specific demo accounts, shown in a small "Demo mode" note: Caregiver (linked to Patient 1), Healthcare Worker (sees all patients).
+
+Demo credentials (mock only):
+
+| Role | Mobile | Code |
+|---|---|---|
+| Caregiver | 9000000001 | 1234 |
+| Healthcare Worker | 9000000002 | 1234 |
+
+In demo mode, any 4-digit code succeeds. A visible "Demo mode" chip makes clear this is not real authentication.
+
+### 6.4 After sign-in
+
+| Role | Route | First thing shown |
+|---|---|---|
+| Patient | `/patient` | Voice greeting, then pending reminders, then Home |
+| Caregiver | `/caregiver` | Overview dashboard |
+| Healthcare Worker | `/clinician` | Patient table sorted by "Needs attention" |
+
+A "Switch role" link remains available in each professional view's settings so reviewers can return to `/`.
+
+---
+
+## 7. States and Edge Cases
+
+| State | Behavior |
+|---|---|
+| Page loading | Hero text renders first. Illustration lazy-loads with a soft placeholder. |
+| Login loading | Button shows spinner and is disabled. Patient sees a single calm spinner. |
+| Invalid mobile number | Inline plain message under the field: "Please enter all 10 digits." |
+| Code does not match (non-demo) | Gentle message "That code did not match. Let's try again." Never "Invalid" or "Failed". |
+| Empty fields | Sign in button stays enabled but shows inline "Please add your mobile number." |
+| Offline | Page works. A small chip says "You are offline. You can still continue." Remembered profiles still sign in. |
+| Voice blocked or unsupported | "Hear welcome" shows captions instead, with no error message. |
+| Language font missing | Fallback to the nearest script font. Text always visible. |
+| Unknown device (patient) | Show up to 4 demo profile tiles instead of a remembered card. |
+| Permission denied (visiting a protected route while signed out) | Redirect to `/` with a short message "Please choose who is signing in." |
+| Already signed in | `/` shows "Continue as {name}" at the top and a "Not you?" link. |
+| Session ends (sign out) | Return to `/`, patient device stays remembered unless the caregiver clears it. |
+
+**Patient safety rule:** the patient flow on this page has no dialogs, no errors, and no dead ends. If anything fails, show "Let's go home" with one large button that retries the patient's entry.
+
+---
+
+## 8. Accessibility
+
+- Role cards and buttons are keyboard focusable with a 3px `--blue` focus ring.
+- The language toggle is reachable by keyboard and labeled for screen readers.
+- Headline uses a single `h1`. Role cards use a `radiogroup` pattern with clear labels.
+- Code inputs support paste, auto-advance, and screen reader labels ("Digit 1 of 4").
+- Contrast meets WCAG AA minimum, and patient elements aim for AAA.
+- Respect `prefers-reduced-motion`.
+- Captions appear for any audio.
+- Touch targets: 64px minimum for patient elements, 44px minimum elsewhere.
+
+---
+
+## 9. Responsive Behavior
+
+| Breakpoint | Layout |
+|---|---|
+| Mobile (under 640px) | Single column. Illustration sits between the headline and the role cards, scaled to 40% of viewport height. Buttons span full width. |
+| Tablet (640 to 1024px) | Single column, larger type, role cards in a row if space allows. |
+| Desktop (above 1024px) | Two columns. Hero on the left, login panel on the right, vertically centered. |
+
+---
+
+## 10. Mock Services and Data
+
+- `mockLogin(role, credentials)` resolves after 300 to 600ms with `{ role, userId, name, patientId? }`.
+- `getRememberedProfile()` returns the remembered patient profile or null.
+- `clearRememberedProfile()` is available from the caregiver's Settings.
+- Demo patient profiles reuse the 8 patients from `patients.json`. The first four appear on an unknown device.
+- Session is stored in a React context and mirrored in local storage so a refresh keeps the user in.
+- Simulated events logged to console for the demo: `landing_viewed`, `role_selected`, `login_submitted`, `login_succeeded`, `language_changed`, `welcome_played`.
+
+---
+
+## 11. Implementation Checklist
+
+### Hero section
+- [ ] Build header with logo, language toggle, and help link
+- [ ] Build hero with headline, subtitle, illustration, and "Hear welcome" button
+- [ ] Add trust line and secondary "How it helps" strip and footer
+- [ ] Add mobile and tablet responsiveness
+
+### Login panel
+- [ ] Build three role cards with selected state
+- [ ] Build patient entry (remembered card and demo profile tiles)
+- [ ] Build caregiver and healthcare worker form with 10-digit mobile and 4-digit code
+- [ ] Add demo mode chip and pre-filled credentials
+- [ ] Add inline validation and plain-language messages
+
+### Behavior and states
+- [ ] Mock login service and routing by role
+- [ ] Remembered device logic and "Not you?" link
+- [ ] Offline chip and offline-safe sign-in
+- [ ] Voice welcome with captions fallback
+- [ ] Redirect signed-out visitors from protected routes to `/`
+- [ ] Language toggle applied to all page copy
+
+### Quality
+- [ ] Contrast, focus ring, and screen reader labels checked
+- [ ] Reduced motion respected
+- [ ] No dialogs or technical errors on the patient path
+
+---
+
+## 12. Ready-to-Paste Lovable Prompt
+
+> Build only the landing page at `/` for SmritiSathi, using the design system in the knowledge base. Do not change other pages. Add a header with the logo, a language toggle (English, Assamese, Bodo, Manipuri, Mizo, Khasi, Nagamese) and a "Need help signing in?" link. Below it, build a hero section: on desktop, two columns with the hero on the left and the login panel on the right; on mobile and tablet, one column with the login panel under the hero. The hero has the headline "Stay sharp. Stay connected.", the subtitle "Memory games, daily reminders and family messages, in your own language.", a warm flat illustration of an elderly person and a family member sharing tea with hills and a tea garden behind, a "Hear welcome" button that uses browser text-to-speech and shows captions if audio is blocked, and the line "Works without internet. Your family's information stays private." The login panel asks "Who is signing in?" with three large role cards (I am the patient, I am a family caregiver, I am a healthcare worker). Selecting a card opens its entry inline below the cards, with no pop-ups. Patient: show a large "Continue as {name}" card with a photo placeholder and first name, or up to 4 demo profile tiles if no device is remembered, with no typing or password. Caregiver and healthcare worker: a 10-digit mobile number field and 4 code boxes, pre-filled with demo values (9000000001 / 1234 and 9000000002 / 1234), a "Sign in" button, a "Demo mode: any 4-digit code works" chip, and plain-language inline validation. Use a mock `mockLogin` service with a 300 to 600ms delay and route to `/patient`, `/caregiver`, or `/clinician`. Redirect signed-out visitors from protected routes back to `/`. Show an "You are offline. You can still continue." chip when offline. Never show technical errors to the patient. Add a light three-item "How it helps" strip (Play, Remember, Stay safe) and a simple footer. Include loading, error, offline, and mobile layouts.
