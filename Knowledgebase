@@ -1,0 +1,288 @@
+# SmritiSathi Knowledge Base
+
+Reference for every Lovable prompt. Front-end only, mock data, no backend or real auth. When a prompt conflicts with this file, follow this file unless the prompt says otherwise.
+
+---
+
+## 1. Product Context
+
+SmritiSathi is a mobile/tablet-first web app that helps elderly people with early to moderate dementia in North Eastern India (NER) keep their minds active, follow daily routines, and stay emotionally engaged. It gives caregivers and healthcare workers a simple way to monitor progress.
+
+Many families live far from neurological care, so the app must feel **friendly, culturally familiar, voice-first, and usable offline**.
+
+**Three views (mock role switcher at `/`):**
+
+| View | Who | Core job |
+|---|---|---|
+| Patient | Elderly person with dementia | Play short games, confirm reminders, call for help |
+| Caregiver | Family member of one patient | Set reminders, watch progress, answer alerts |
+| Healthcare Worker | ASHA worker, nurse, clinician | Spot patients who need attention, add notes, set difficulty ceiling |
+
+**Route map**
+
+```
+/                        Role switcher
+/patient                 Reminder flow, then falls through to Home
+/patient/home            Home (big cards)
+/patient/play            Game picker
+/patient/play/:game      Game screen
+/patient/my-day          Today's schedule
+/patient/family          Family photos and messages
+/caregiver               Overview
+/caregiver/reminders     Reminder list, add/edit drawer
+/caregiver/progress      Trend charts
+/caregiver/alerts        Alert list
+/caregiver/settings      Language, voice, theme
+/clinician               Patient table
+/clinician/patient/:id   Patient detail
+/clinician/alerts        All alerts
+```
+
+---
+
+## 2. Design Principles
+
+1. **Project Structure:** Maintain consistent file and folder organization. Group related code by feature or domain. Follow established patterns for hooks, components, utilities, and types. Keep separation of concerns clear between UI, business logic, and data layers.
+2. **Strict TypeScript:** Always use strict typing. Avoid 'any'. Ensure data structures are explicitly defined to prevent runtime errors.
+3. **Descriptive Naming:** Use clear, intent-based names for variables, functions, and components (examples: `isUserAuthenticated` instead of `auth`).
+4. **DRY Principle:** Do not repeat yourself. Centralize shared logic, types, and components. If a pattern is used more than twice, create a reusable utility or component.
+5. **Error Handling:** Always implement 'Unhappy Path' logic. Provide clear, user-friendly error messages and loading states for all asynchronous actions.
+6. **Security (Server-Side Logic):** Never trust the client. Sensitive logic, data validation, and API keys must remain on the server/back end.
+7. **Accessible Component Design:** Build using small, isolated UI components with proper accessibility. Use ARIA labels, semantic HTML, keyboard navigation support, and ensure WCAG AA compliance. Components should be reusable and follow standard naming conventions (Modals, Cards, Buttons).
+8. **Mobile-First Responsiveness:** All UI must be fully responsive and optimized for mobile devices before scaling to desktop.
+9. **Comprehensive Logging:** Always implement detailed logging by default to ensure observability and rapid debugging. Log edge function entry/exit with parameters, external API calls with request/response details, database operations, authentication events, and data transformations at key boundaries. Use structured logging with consistent formats.
+10. **Modular Architecture:** Structure all code (front end and back end) in a modular way so that individual features can be tested, debugged, and rolled back without affecting global state. Keep concerns separated and dependencies explicit.
+
+
+## 3. Color Tokens
+
+Palette is inspired by tea gardens, muga silk, and the Brahmaputra, kept soft and high-contrast. Define these as CSS variables / Tailwind theme tokens and never hard-code hex values in components.
+
+| Token | Hex | Use |
+|---|---|---|
+| `--bg` | `#FAF7F2` | Page background (warm off-white) |
+| `--surface` | `#FFFFFF` | Cards, drawers |
+| `--text` | `#1E2A24` | Main text |
+| `--text-muted` | `#4A5A52` | Secondary text |
+| `--border` | `#E2DDD3` | Dividers, card borders |
+| `--primary` | `#2F6B4F` | Primary buttons, active tab (tea green) |
+| `--primary-dark` | `#1F4A37` | Pressed state, headings on tint |
+| `--primary-tint` | `#E3F1EA` | Selected rows, soft backgrounds |
+| `--gold` | `#C98A1B` | Stars, highlights, progress (muga gold) |
+| `--gold-tint` | `#FBF0D9` | Soft highlight backgrounds |
+| `--blue` | `#2B6CB0` | Info, links, charts (river blue) |
+| `--blue-tint` | `#E6F0FA` | Info banners |
+| `--success` | `#2E7D32` | Done ticks, "Doing well" |
+| `--warning` | `#B7791F` | "Will sync", overlap warnings |
+| `--urgent` | `#B3261E` | Urgent alerts, professional views only |
+| `--help` | `#C4553B` | Patient Help card (calm coral, not alarm red) |
+
+**Color rules**
+- Body text on background must meet WCAG AA (4.5:1) at minimum. Patient text should reach AAA where possible.
+- Never use color alone to carry meaning. Pair it with an icon or a word.
+- Patient view uses primary, gold, blue, and help only. **No `--urgent` red in the patient view.**
+- Charts use `--primary`, `--blue`, `--gold`, and `--text-muted` for the four cognitive areas, each with a distinct line style or marker.
+- Support light theme by default. Dark theme is optional and set by the caregiver in Settings.
+
+---
+
+## 4. Typography
+
+**Fonts**
+- Latin UI: **Atkinson Hyperlegible** (designed for low vision).
+- Scripts and fallback: **Noto Sans** family, including Noto Sans Bengali (Assamese), Noto Sans Devanagari (Bodo), and Noto Sans Meetei Mayek (Manipuri).
+- Font stack: `"Atkinson Hyperlegible", "Noto Sans", "Noto Sans Bengali", "Noto Sans Devanagari", "Noto Sans Meetei Mayek", system-ui, sans-serif`
+
+**Type scale**
+
+| Role | Patient view | Caregiver / Healthcare Worker |
+|---|---|---|
+| Page title | 40px / bold | 28px / bold |
+| Section heading | 32px / bold | 20px / semibold |
+| Body | 24px / regular | 16px / regular |
+| Button label | 28px / bold | 16px / semibold |
+| Caption | 20px minimum | 14px |
+
+**Rules**
+- Line height 1.5 for body, 1.25 for headings. Increase to 1.7 for non-Latin scripts.
+- No italics or all-caps in the patient view.
+- Left-align text. Never justify.
+- Keep patient sentences under 12 words. One idea per sentence.
+
+---
+
+## 5. Spacing, Shape, and Touch Targets
+
+- Base spacing unit: 8px. Use 8, 16, 24, 32, 48.
+- **Patient tap targets: minimum 64px height, 12px minimum gap.** Primary buttons span full width on mobile.
+- **Professional tap targets: minimum 44px.**
+- Card radius 20px (patient) / 12px (professional). Button radius 16px.
+- Cards: 1px `--border`, soft shadow `0 2px 8px rgba(30,42,36,0.08)`.
+- Maximum content width: 720px (patient), 1280px (professional).
+- Breakpoints: mobile under 640px, tablet 640 to 1024px, desktop above 1024px.
+
+---
+
+## 6. Component Specifications
+
+### Patient components
+- **Big card** (Home): square-ish, large icon (64px+), one word label, 2 columns on tablet and mobile. Pressed state: gentle pulse plus soft sound.
+- **Reminder card**: full-screen, illustration at top, one sentence, two stacked buttons ("Yes, I took it" primary, "Remind me later" secondary), speaker button to replay voice.
+- **Home button** (sub-screens): fixed, large, labeled "Home" with a house icon, always the same position.
+- **Speaker button**: round, 64px, always top right of the content area.
+- **Timeline item** (My Day): large icon, time, short label. Done = green tick plus the word "Done".
+- **Result screen**: 1 to 3 gold stars, one warm sentence, "Play again" and "Home".
+
+### Caregiver and Healthcare Worker components
+- **Stat card**: label, large number, small trend or hint line.
+- **Side drawer**: slides in from the right (bottom sheet on mobile), title, form or detail, sticky action bar.
+- **Table**: sortable headers, row hover, 10 rows per page. Becomes stacked cards on mobile.
+- **Toast**: bottom center, 4 seconds, used for save and acknowledge only.
+- **Sync chip** (header): see section 10.
+- **Alert row**: icon, title, time, status badge (New, Acknowledged, Resolved, Will sync).
+- **Skeleton cards** for loading. **Setup checklist** for empty state.
+- **Confirmation dialog**: only for destructive actions such as deleting a reminder.
+
+### States every screen must handle
+Loading, empty, error, and offline. Patient loading = one calm spinner. Patient error = "Let's go back home" with one button. Professional error = short plain message plus a Retry button.
+
+---
+
+## 7. Language and Tone
+
+### Patient wording
+Use short, warm, positive words. Address the person by first name.
+
+| Use | Never use |
+|---|---|
+| "Good morning, Ama" | "Welcome back, User" |
+| "Time for your morning medicine" | "Medication due" |
+| "Nice try! Let's try again" | "Wrong", "Failed", "Incorrect", "Error" |
+| "Great job today" | "Score: 40%" |
+| "Let's go back home" | "Something went wrong", error codes |
+| "Your family will appear here soon" | "No data", "Empty" |
+
+**Game feedback rules**
+- Encouraging only. No sounds that signal failure.
+- After two misses, show a soft hint, never the answer in red.
+- Stars always show at least one.
+
+### Professional wording
+Plain language, no jargon beyond what a nurse or ASHA worker uses. Use "Needs attention" and "Doing well" as the two summary labels. Avoid diagnostic claims. The app tracks engagement and cognitive activity, it does not diagnose.
+
+---
+
+## 8. Voice and Audio
+
+- Voice greeting on opening: name, date, time of day.
+- Every reminder, game instruction, and "Read aloud" uses text-to-speech with a replay speaker button.
+- Use the browser speech APIs behind a small wrapper so the voice layer can be turned off without changing screens.
+- **Voice failure fallback:** on-screen buttons always remain. If audio is blocked, show a captions banner with the same text.
+- Voice message language is chosen per reminder by the caregiver.
+- Support for Bodo, Mizo, Khasi, Nagamese, and Manipuri speech varies by device. Show text in the chosen language even when voice falls back to a nearby language, and never show a technical error.
+
+---
+
+## 9. Motion and Feedback
+
+- Transitions 200 to 300ms, ease-out. No bouncing, shaking, flashing, or fast-moving elements in the patient view.
+- Tap feedback: soft scale pulse (about 3%) plus a gentle tone. Respect `prefers-reduced-motion` by removing motion and keeping the tone.
+- Badge pulse for new alerts (professional views only), stops after 3 pulses.
+- Never auto-advance a patient screen without a clear tap, except the result screen after a game.
+
+---
+
+## 10. Offline and Sync
+
+| Situation | Patient sees | Caregiver / Healthcare Worker sees |
+|---|---|---|
+| Offline | Nothing changes | Chip: "Offline, changes saved on device" |
+| Play while offline | Nothing changes | Tag on session: "Saved on device" |
+| Acknowledge alert offline | n/a | Alert shows "Will sync" |
+| Connection returns | Nothing changes | Chip changes to "Synced just now" |
+
+Implementation for the demo: keep a local queue in memory or local storage, and provide a hidden toggle to simulate offline and online.
+
+---
+
+## 11. Accessibility Checklist
+
+- Visible focus ring (3px, `--blue`) on every interactive element.
+- Every icon button has an accessible label.
+- Screen reader order matches visual order.
+- Minimum contrast met in all themes.
+- No timeouts that cause loss of progress. Mid-game exit always saves.
+- No flashing content.
+- Forms: inline plain-language messages, never color-only errors.
+
+---
+
+## 12. Games
+
+| Game | What the patient does | Cognitive area | Notes |
+|---|---|---|---|
+| Memory match | Flip pairs of regional objects | Memory | Start with 4 pairs, max 8 |
+| Sound and picture recognition | Hear a sound, pick the matching picture | Recognition | 3 picture choices, large |
+| Routine recall | "What do we do after tea?" pick the next step | Recall | Uses the patient's own routine where possible |
+| Pattern completion | Pick the missing piece in a simple sequence | Attention | Colors plus shapes, never colors alone |
+
+**Regional objects and sounds (illustrations, not photos):** tea cup and kettle, bamboo basket (*dola*), gamosa, *japi* hat, loom, banana leaf, betel nut and leaf, boat on a river, hornbill, one-horned rhino, pineapple, orange, conch shell, drum, flute, rain, river, birdsong, temple or church bell, market sounds.
+
+**Difficulty:** levels 1 to 5, adjusted automatically in the mock logic, capped by the Healthcare Worker's "difficulty ceiling". Show the level only in professional views.
+
+---
+
+## 13. Mock Data Guide
+
+All data is fictional. Generate with the service layer in `/services` and JSON in `/data`.
+
+**Files:** `patients.json`, `caregivers.json`, `clinicians.json`, `reminders.json`, `gameSessions.json`, `alerts.json`, `familyMembers.json`.
+
+**Service functions** (each with 300 to 600ms simulated delay): `getPatients()`, `getPatient(id)`, `getReminders()`, `addReminder()`, `getSessions()`, `getAlerts()`, `acknowledgeAlert()`.
+
+**Starter roster (8 patients)**
+
+| # | Name | Language | Place | Stage | Score trend |
+|---|---|---|---|---|---|
+| 1 | Ama Devi | Assamese | Sualkuchi, Assam | Early | Improving |
+| 2 | Rani Boro | Bodo | Kokrajhar, Assam | Moderate | Declining |
+| 3 | Ibomcha Singh | Manipuri | Moirang, Manipur | Early | Stable |
+| 4 | Lalnunmawii | Mizo | Champhai, Mizoram | Moderate | Stable |
+| 5 | Kynsai Lyngdoh | Khasi | Mawlynnong, Meghalaya | Early | Improving |
+| 6 | Vizonuo Rio | Nagamese | Khonoma, Nagaland | Moderate | Declining |
+| 7 | Tage Nabam | English / Nyishi | Ziro, Arunachal Pradesh | Early | Stable |
+| 8 | Pemba Bhutia | Nepali / Sikkimese | Pelling, Sikkim | Moderate | Improving |
+
+Adjust names or places freely. Keep a mix of improving, stable, and declining so the "Needs attention" sort has something to show.
+
+**Volumes and relationships**
+- 2 caregivers, each linked to one patient for the caregiver demo. All patients link to the one Healthcare Worker.
+- About 10 reminders per patient: Medicine, Water, Activity, Appointment.
+- 30 days of game scores per patient, scripted to follow that patient's trend with realistic noise.
+- 3 to 6 alerts per patient, such as "Missed medicine at 8:00 AM", "No activity today", "Help button pressed", "Scores dropping this week".
+- 4 to 6 family members per patient with name, relationship, photo placeholder, and a short note.
+- Adherence % and "last active" derive from the reminders and sessions, not typed in by hand.
+
+---
+
+## 14. Rules for Lovable
+
+1. Build only what the current prompt asks for. Do not change other pages.
+2. Use the tokens in this file. Do not invent new colors, fonts, or spacing.
+3. Keep patient and professional components separate so patient rules (big, quiet, no dialogs) are never mixed with dashboard patterns.
+4. All text goes through a simple translation helper so languages can be switched later.
+5. Mock data only. No backend calls, no real login, no secrets.
+6. Every new screen must include its loading, empty, error, and mobile layouts.
+7. After each build, list what was added and anything assumed.
+
+---
+
+## 15. Definition of Done (per screen)
+
+- [ ] Uses design tokens only
+- [ ] Meets tap-size and contrast rules for its view
+- [ ] Loading, empty, error, and offline states handled
+- [ ] Works at mobile and tablet widths
+- [ ] Voice features have an on-screen fallback
+- [ ] Patient wording follows the positive-language rules
+- [ ] Mock data comes from the service layer
